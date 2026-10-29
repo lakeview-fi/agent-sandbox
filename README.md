@@ -4,14 +4,64 @@ Research notes on how to run AI coding agents (Claude Code, Codex, Pi-dev) witho
 
 ## What is in this repository
 
-This repository is documentation only. It has no application code, build system, or tests.
+This repository is documentation plus Claude Code skills. It has no application code, build system, or tests.
 
 | Path | Contents |
 |---|---|
-| [`docs/`](docs/index.md) | All content. Start at the index. |
+| [`docs/`](docs/index.md) | All documentation. Start at the index. |
+| [`.claude/skills/`](.claude/skills) | Skills that set up and smoke-test a sandbox, and that develop a sandbox for your project. See [How to use this](#how-to-use-this). |
 | [`docs/analysis/harness/`](docs/analysis/harness/index.md) | Built-in sandboxes and approval models of the agent harnesses: Claude Code, Codex, Pi-dev. |
 | [`docs/analysis/execution/`](docs/analysis/execution/index.md) | Outer execution boundaries: Docker Sandboxes, ordinary Docker, E2B, NVIDIA OpenShell, with local setup guides. |
 | [`docs/analysis/synthesis/`](docs/analysis/synthesis/index.md) | Cross-cutting comparisons, risk mapping, dynamic access requests, and a design proposal for a custom chat UI. |
+
+## How to use this
+
+The skills are for [Claude Code](https://code.claude.com/docs/en/skills). Pick **Docker Sandboxes** (supported on Windows 11, macOS and Linux) or **NVIDIA OpenShell** (macOS and Linux; experimental on Windows). Not sure? Read the [executive summary](docs/analysis/executive-summary.md) first.
+
+### 1. Set up and smoke-test the tool (once per machine)
+
+Open Claude Code **in this repository**. The skills in `.claude/skills/` load automatically as project skills, so nothing is installed globally.
+
+```sh
+cd /path/to/agent-sandbox
+claude
+```
+
+Then run one of:
+
+- `/setup-smoketest-docker-sandbox`
+- `/setup-smoketest-openshell`
+
+Claude asks before installing anything and before any login. You run the sign-in and secret commands yourself. The skill proves the sandbox starts, blocks unlisted network hosts, and keeps host files out of reach, and it records the results in `docs/trials/` (gitignored, so your machine's records are not committed).
+
+### 2. Develop a sandbox for your project
+
+Start Claude Code **in your project** and add this repository for that session only. The `develop-...` skills load from this repository's `.claude/skills/` and nothing is copied or installed globally.
+
+```sh
+cd /path/to/your-project
+claude --add-dir /path/to/agent-sandbox
+```
+
+On Windows PowerShell use a Windows path, for example `claude --add-dir C:\src\agent-sandbox`. The `--add-dir` flag also gives the session file access to this repository.
+
+Then run `/develop-docker-sandbox` or `/develop-openshell-sandbox` and describe what you want, for example:
+
+> Build a sandbox for this project for Claude Code. Put it in `sandbox/`. Mount `../reference-docs` read-only. Use the reviewer persona in `.claude/agents/reviewer.md`. The acceptance task is: run the test suite and fix any failing test.
+
+The managing session writes the Dockerfile (if needed) and the policy or environment file, runs your agent in the sandbox on the acceptance task, and tightens or widens access one step at a time. Each widening is logged in `sandbox/DECISIONS.md`, and anything touching credentials or host-write paths comes back to you. The method is in [developing an application-specific sandbox](docs/guides/developing-an-app-sandbox.md).
+
+### Alternative: symlink instead of `--add-dir`
+
+To have the skills in one project without passing a flag each time, symlink them into that project:
+
+```sh
+mkdir -p .claude/skills
+ln -s /path/to/agent-sandbox/.claude/skills/develop-docker-sandbox .claude/skills/develop-docker-sandbox
+ln -s /path/to/agent-sandbox/.claude/skills/develop-openshell-sandbox .claude/skills/develop-openshell-sandbox
+```
+
+Claude Code documents symlinked skill folders. On Windows, creating symlinks needs Developer Mode or an elevated shell, and `--add-dir` is simpler. A symlinked skill links to this repository's guides by relative path, which may not resolve from the project; `--add-dir` does not have that problem.
 
 ## The two layers
 
