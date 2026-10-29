@@ -2,7 +2,7 @@
 
 This guide runs Claude Code or Codex inside a **local Docker Sandbox** (`sbx`). Each sandbox is a microVM with its own Linux kernel, network, filesystem, and Docker Engine. The agent has broad control inside that VM, but host resources are available only through configured shares and network rules.
 
-To reproduce this setup as a checklist with a smoke test, use the [`docker-sandbox-local-agent`](../../../.claude/skills/docker-sandbox-local-agent/SKILL.md) skill.
+To reproduce this setup as a checklist with a smoke test, use the [`setup-smoketest-docker-sandbox`](../../../.claude/skills/setup-smoketest-docker-sandbox/SKILL.md) skill.
 
 ## 1. Install and sign in
 

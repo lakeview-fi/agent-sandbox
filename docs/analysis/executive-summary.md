@@ -48,10 +48,17 @@ A permitted action can still do damage: an agent with write access can alter tho
 
 Reproducible trial checklists (preflight, least-access setup, smoke test, teardown) are available as skills in this repo:
 
-- **Docker Sandboxes:** [`docker-sandbox-local-agent`](../../.claude/skills/docker-sandbox-local-agent/SKILL.md)
-- **NVIDIA OpenShell:** [`openshell-local-agent`](../../.claude/skills/openshell-local-agent/SKILL.md)
+- **Docker Sandboxes:** [`setup-smoketest-docker-sandbox`](../../.claude/skills/setup-smoketest-docker-sandbox/SKILL.md)
+- **NVIDIA OpenShell:** [`setup-smoketest-openshell`](../../.claude/skills/setup-smoketest-openshell/SKILL.md)
 
 OpenShell is not production-qualified on native Windows; on a Windows 11 host, Docker Sandboxes is the supported local route.
+
+## Build a sandbox for your project
+
+Once a trial passes, a managing agent can develop a project-specific sandbox (Dockerfile, mounts, network policy, agent persona) and prove it with a representative task, following [the method](../guides/developing-an-app-sandbox.md):
+
+- **Docker Sandboxes:** [`develop-docker-sandbox`](../../.claude/skills/develop-docker-sandbox/SKILL.md)
+- **NVIDIA OpenShell:** [`develop-openshell-sandbox`](../../.claude/skills/develop-openshell-sandbox/SKILL.md)
 
 ## Where to read more
 

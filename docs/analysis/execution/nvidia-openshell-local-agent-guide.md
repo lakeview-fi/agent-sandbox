@@ -2,7 +2,7 @@
 
 This guide covers the **execution layer**, using NVIDIA OpenShell as the outer policy and execution boundary for the **agent harness** Claude Code or Codex. The harness controls its own tool workflow and may apply an inner command sandbox; OpenShell controls what the outer workload can access. OpenShell launches the agent in a sandbox, applies filesystem/process rules, routes network traffic through its policy layer, and can broker supported credentials. The sandbox compute driver determines the isolation implementation: Docker, Podman, Kubernetes, or MicroVM. An inner harness control cannot grant access denied by OpenShell.
 
-To reproduce this setup as a checklist with a smoke test, use the [`openshell-local-agent`](../../../.claude/skills/openshell-local-agent/SKILL.md) skill.
+To reproduce this setup as a checklist with a smoke test, use the [`setup-smoketest-openshell`](../../../.claude/skills/setup-smoketest-openshell/SKILL.md) skill.
 
 ## 1. Check host support and choose a driver
 

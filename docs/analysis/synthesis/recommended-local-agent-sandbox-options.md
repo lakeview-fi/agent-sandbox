@@ -52,8 +52,10 @@ When using Claude Code’s built-in sandbox inside either outer environment, `/s
 
 Runnable checklists (preflight, least-access setup, smoke test, teardown) for trying each option:
 
-- [`docker-sandbox-local-agent`](../../../.claude/skills/docker-sandbox-local-agent/SKILL.md)
-- [`openshell-local-agent`](../../../.claude/skills/openshell-local-agent/SKILL.md)
+- [`setup-smoketest-docker-sandbox`](../../../.claude/skills/setup-smoketest-docker-sandbox/SKILL.md)
+- [`setup-smoketest-openshell`](../../../.claude/skills/setup-smoketest-openshell/SKILL.md)
+
+To then build a project-specific sandbox (Dockerfile, mounts, network policy, persona) and test an agent in it, use [`develop-docker-sandbox`](../../../.claude/skills/develop-docker-sandbox/SKILL.md) or [`develop-openshell-sandbox`](../../../.claude/skills/develop-openshell-sandbox/SKILL.md), which follow [the method](../../guides/developing-an-app-sandbox.md).
 
 ## Source and version notes
 

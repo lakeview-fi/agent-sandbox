@@ -17,5 +17,6 @@ Execution environments and policy runtimes contain an agent process or its code.
 
 Agent skills that turn the guides into a runnable checklist with a smoke test:
 
-- [`docker-sandbox-local-agent`](../../../.claude/skills/docker-sandbox-local-agent/SKILL.md) — Docker Sandboxes (`sbx`) trial.
-- [`openshell-local-agent`](../../../.claude/skills/openshell-local-agent/SKILL.md) — NVIDIA OpenShell trial.
+- [`setup-smoketest-docker-sandbox`](../../../.claude/skills/setup-smoketest-docker-sandbox/SKILL.md) — Docker Sandboxes (`sbx`) trial.
+- [`setup-smoketest-openshell`](../../../.claude/skills/setup-smoketest-openshell/SKILL.md) — NVIDIA OpenShell trial.
+- [`develop-docker-sandbox`](../../../.claude/skills/develop-docker-sandbox/SKILL.md) and [`develop-openshell-sandbox`](../../../.claude/skills/develop-openshell-sandbox/SKILL.md) — develop and test a project-specific sandbox ([method](../../guides/developing-an-app-sandbox.md)).
