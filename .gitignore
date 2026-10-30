@@ -1,2 +1,5 @@
 # Local trial records; not committed
 docs/trials/
+
+# Python bytecode
+__pycache__/
