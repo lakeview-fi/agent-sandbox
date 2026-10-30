@@ -141,7 +141,7 @@ An ordinary container is not automatically a security sandbox just because it is
 
 1. **The shared workspace is the most direct path back to the host.** In direct mode, the agent can rewrite project files and delete data there. Clone mode is the safer choice for unfamiliar agents, parallel runs, or preserving the host working tree, but it exposes source files and secrets under the repository.
 2. **Allowed network is still a data path.** An agent can send workspace contents to any permitted service. Deny-all or a short task-specific allowlist gives tighter control; credential proxying protects raw key values but does not prevent an agent from using authorized APIs.
-3. **Host integrations can cross the boundary.** Local MCP servers/gateways, shared skills, clipboard writes, port forwarding, and forwarded SSH agents have their own host-side effects and controls. A sandbox does not automatically sandbox those host processes.
+3. **Host integrations can cross the boundary.** Local MCP servers registered with Docker's gateway (a stdio server configured in the agent's own in-guest config runs in the guest instead; see [MCP servers and sandboxes](../synthesis/mcp-servers-and-sandboxes.md)), shared skills, clipboard writes, port forwarding, and forwarded SSH agents have their own host-side effects and controls. A sandbox does not automatically sandbox those host processes.
 4. **MicroVMs reduce shared-kernel exposure; they are not a proof of invulnerability.** Keep the runtime updated and avoid weakening its boundary. For ordinary containers, the host kernel is shared by design.
 5. **Development outputs can be executable inputs later.** Review scripts, hooks, CI, IDE tasks, agent settings, and generated code before triggering them on the host.
 

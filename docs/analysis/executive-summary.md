@@ -67,4 +67,5 @@ Once a trial passes, a managing agent can develop a project-specific sandbox (Do
 - Choosing a local outer boundary and setup: [recommended-local-agent-sandbox-options.md](synthesis/recommended-local-agent-sandbox-options.md)
 - Full layered matrix and cost comparison: [comparative-sandboxing-analysis.md](synthesis/comparative-sandboxing-analysis.md)
 - Risks mapped to mitigations: [coding-agent-risk-scenarios-and-sandbox-mitigations.md](synthesis/coding-agent-risk-scenarios-and-sandbox-mitigations.md)
+- MCP servers (inside, same host, remote): [mcp-servers-and-sandboxes.md](synthesis/mcp-servers-and-sandboxes.md)
 - Per-product detail: [harness](harness/index.md) and [execution](execution/index.md)

@@ -14,7 +14,7 @@ The templates were tested only on Windows 11 with PowerShell (pwsh 7) and `sbx` 
 
 ## All hosts
 
-- Host-side steps in `sbxenv.yaml` (`secrets.command`, `lifecycle.initialize/postCreate/preRemove`, `mcp.servers.command`) run in the user's host shell. Write commands that exist there, for example `gh auth token`; avoid shell-specific syntax unless you note the shell.
+- Host-side steps in `sbxenv.yaml` (`secrets.command`, `lifecycle.initialize/postCreate/preRemove`, `mcp.servers.command`, which the config-file reference and Docker's MCP pages do not confirm: verify it before use) run in the user's host shell. Write commands that exist there, for example `gh auth token`; avoid shell-specific syntax unless you note the shell.
 - Relative paths in `sbxenv.yaml` resolve from the file's directory, not the current directory. Re-check them after moving the file.
 - Direct mounts use a virtiofs cache by default. If the sandboxed agent sees stale files, try `DOCKER_SANDBOXES_ENABLE_VIRTIOFS_CACHE=0` (documented by Docker; per-OS effect untested) and record that you did.
 

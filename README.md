@@ -15,7 +15,7 @@ This repository is documentation plus Claude Code skills, and a few helper scrip
 | [`docs/guides/how-to/`](docs/guides/how-to/index.md) | How to run a session, change permissions and commit the sandbox definition, for Docker Sandboxes and OpenShell. For humans and agents. |
 | [`docs/analysis/harness/`](docs/analysis/harness/index.md) | Built-in sandboxes and approval models of the agent harnesses: Claude Code, Codex, Pi-dev. |
 | [`docs/analysis/execution/`](docs/analysis/execution/index.md) | Outer execution boundaries: Docker Sandboxes, ordinary Docker, E2B, NVIDIA OpenShell, with local setup guides. |
-| [`docs/analysis/synthesis/`](docs/analysis/synthesis/index.md) | Cross-cutting comparisons, risk mapping, dynamic access requests, and a design proposal for a custom chat UI. |
+| [`docs/analysis/synthesis/`](docs/analysis/synthesis/index.md) | Cross-cutting comparisons, risk mapping, MCP servers and sandboxes, dynamic access requests, and a design proposal for a custom chat UI. |
 
 ## How to use this
 
