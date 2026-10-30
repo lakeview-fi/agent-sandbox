@@ -31,6 +31,7 @@ SKILL_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SKILL_DIR.parents[2]  # <repo>/.claude/skills/<skill>
 PULL_SCRIPT = REPO_ROOT / "scripts" / "pull_docker_commits.py"
 PASS, FAIL, INFO, SKIP = "PASS", "FAIL", "INFO", "SKIP"
+DEFAULT_MODEL = "claude-haiku-5-5"  # small and cheap; used by the raw API probe in check 8c-diag
 GIT_ID = ["-c", "user.name=trial", "-c", "user.email=trial@example.invalid"]
 AGENT_CLI = {  # agent -> (version command, one-shot prompt command)
     "claude": (["claude", "--version"], ["claude", "-p", "Reply with the single word OK"]),
@@ -297,7 +298,7 @@ def step_agent(ctx: Ctx) -> list[Check]:
     elif ver.code != 0:
         out.append(Check("8c LLM inference through the agent", SKIP, f"{agent} CLI did not run, so inference cannot be tested"))
     else:
-        probe = anthropic_probe(n) if agent == "claude" else ""
+        probe = anthropic_probe(n, ctx.args.model) if agent == "claude" else ""
         status = re.search(r"HTTP (\d{3})", probe)
         if status and status.group(1) in ("401", "403"):
             # `claude -p` retries a rejected credential silently for minutes, so fail fast with the reason instead.
@@ -346,7 +347,7 @@ def agent_task(ctx: Ctx, agent: str, cli_ok: bool, checks: list[Check]) -> Check
     return Check(name, PASS if ok else FAIL, f"exit {r.code}; reply: {r.text[-120:]!r}; expected {token.upper()}")
 
 
-def anthropic_probe(name: str) -> str:
+def anthropic_probe(name: str, model: str) -> str:
     """One raw API call using whatever the sandbox's apiKeyHelper returns. Prints only the helper
     command, the value LENGTH, the HTTP status and the API's error text; never the credential."""
     script = (
@@ -354,7 +355,7 @@ def anthropic_probe(name: str) -> str:
         'echo "helper command: [$H]"; [ -n "$H" ] || exit 0; K=$(sh -c "$H" 2>/dev/null); echo "helper value length: ${#K}"; '
         'curl -s -m 30 -w "\\nHTTP %{http_code}\\n" https://api.anthropic.com/v1/messages -H "x-api-key: $K" '
         '-H "anthropic-version: 2023-06-01" -H "content-type: application/json" '
-        '-d \'{"model":"claude-haiku-5-5","max_tokens":8,"messages":[{"role":"user","content":"Reply with the single word OK"}]}\' | cut -c1-300'
+        f'-d \'{{"model":"{model}","max_tokens":8,"messages":[{{"role":"user","content":"Reply with the single word OK"}}]}}\' | cut -c1-300'
     )
     return guest(name, script, timeout=90).text
 
@@ -492,7 +493,8 @@ def main() -> int:
     ap.add_argument("--kit", default="", help="sandbox kit reference (e.g. ./kit) passed to sbx create instead of the agent name; required for pi")
     ap.add_argument("--allow-host", default="example.com")
     ap.add_argument("--other-host", default="example.org")
-    ap.add_argument("--no-inference", action="store_true", help="skip the LLM inference check (reported as SKIP)")
+    ap.add_argument("--model", default=DEFAULT_MODEL, help="model for the raw API probe in check 8c-diag (default: %(default)s)")
+    ap.add_argument("--no-inference",action="store_true", help="skip the LLM inference check (reported as SKIP)")
     ap.add_argument("--record", action="store_true", help="append a Run section to docs/trials/docker-sandboxes-<os>.md")
     ap.add_argument("--keep", action="store_true", help="skip teardown (you must run sbx rm --force yourself)")
     args = ap.parse_args()
