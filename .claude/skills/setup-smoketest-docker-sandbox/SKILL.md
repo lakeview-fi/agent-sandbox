@@ -13,7 +13,8 @@ Background: [docker-sandbox-local-agent-guide.md](../../../docs/analysis/executi
 | [CHECKS.md](CHECKS.md) | what to check before, right after, and after the sandbox exists |
 | [SMOKETEST.md](SMOKETEST.md) | each smoke test, its pass criteria, open observations |
 | [RECORD.md](RECORD.md) | where and how to write the trial record |
-| `smoketest.py` | automates preflight, create, tests, teardown, record |
+| `smoketest.py` | entry point that automates preflight, create, tests, teardown, record; run it as `python -I smoketest.py` |
+| [`sbx_smoketest/`](sbx_smoketest/) | the code behind it, one module per responsibility: `cli` (flow), `preflight`, `step_create`, `step_network` (1-2), `step_isolation` (3-4), `step_pull_script` (9), `step_agent` (8), `step_observations` (5-7), `runner`, `teardown`, `report`, `record`, plus `process`, `helpers`, `repo`, `model`, `config` |
 | [`scripts/pull_docker_commits.py`](../../../scripts/pull_docker_commits.py) | pulls the commits made in the sandbox clone into a host branch; `smoketest.py` tests it on a temp branch (check 9) |
 
 ## Ground rules

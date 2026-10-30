@@ -178,7 +178,8 @@ The agent's bash sandbox can block the Docker socket and the gateway, even when 
 - [PLATFORM-WINDOWS.md](PLATFORM-WINDOWS.md): Windows 11 routes, including WSL2.
 - [WSL-DOCKER-DESKTOP.md](WSL-DOCKER-DESKTOP.md): Docker Desktop settings, hosts fallback, restart order, socket symptoms.
 - [SANDBOX-IMAGE.md](SANDBOX-IMAGE.md), [Dockerfile](Dockerfile) and [Dockerfile.pi](Dockerfile.pi): the Claude Code and pi trial images (Node 22, Claude Code, git, curl).
-- `smoketest.py`: automates create, checks, teardown and the record.
+- `smoketest.py`: entry point that automates create, checks, teardown and the record; run it as `python3 -I smoketest.py`.
+- [`openshell_smoketest/`](openshell_smoketest/): the code behind it, one module per responsibility: `cli` (flow), `preflight`, `step_create`, `step_upload` (3-4), `step_pull_script` (10), `step_network` (1-2), `step_host_visibility` (5), `step_agent` (8) with `agent_task` (8e, `AgentSpec`/`AGENTS`), `step_observations`, `runner`, `teardown`, `report`, `record`, plus `process`, `helpers`, `model`, `config`.
 - [`scripts/pull_openshell_changes.py`](../../../scripts/pull_openshell_changes.py): pulls the changes made in the sandbox copy into a host branch; `smoketest.py` tests it on a temp branch (check 10).
 - [CHECKS.md](CHECKS.md): checks before, right after, and after the sandbox exists.
 - [SMOKETEST.md](SMOKETEST.md): each check, its pass criteria, observations, verification status.
@@ -186,7 +187,7 @@ The agent's bash sandbox can block the Docker socket and the gateway, even when 
 
 ## Running pi instead of claude
 
-[pi](https://github.com/badlogic/pi-mono) (`@mariozechner/pi-coding-agent`, command `pi`, one-shot `pi -p "<prompt>"`) has its own image, [Dockerfile.pi](Dockerfile.pi) (`trial-pi:local`, see [SANDBOX-IMAGE.md](SANDBOX-IMAGE.md)). Run `smoketest.py --agent pi` (the image defaults to `trial-<agent>:local`). `--agent` selects an `AgentSpec` in `smoketest.py` (`AGENTS`) that drives checks 8a and 8e; to support another agent, add an entry there. For pi on `openrouter`: pi reads `OPENROUTER_API_KEY` itself (the guest holds the placeholder), so no env mapping and no extra policy rule are needed (pi is a node script; the network client is `/usr/local/bin/node`, which the provider rule allows); a `models.json` override caps output tokens at 4000 (see SMOKETEST.md). Tested: `SETUP VERIFIED`. Never put a raw key in the guest.
+[pi](https://github.com/badlogic/pi-mono) (`@mariozechner/pi-coding-agent`, command `pi`, one-shot `pi -p "<prompt>"`) has its own image, [Dockerfile.pi](Dockerfile.pi) (`trial-pi:local`, see [SANDBOX-IMAGE.md](SANDBOX-IMAGE.md)). Run `smoketest.py --agent pi` (the image defaults to `trial-<agent>:local`). `--agent` selects an `AgentSpec` in `openshell_smoketest/agent_task.py` (`AGENTS`) that drives checks 8a and 8e; to support another agent, add an entry there. For pi on `openrouter`: pi reads `OPENROUTER_API_KEY` itself (the guest holds the placeholder), so no env mapping and no extra policy rule are needed (pi is a node script; the network client is `/usr/local/bin/node`, which the provider rule allows); a `models.json` override caps output tokens at 4000 (see SMOKETEST.md). Tested: `SETUP VERIFIED`. Never put a raw key in the guest.
 
 ## After setup
 

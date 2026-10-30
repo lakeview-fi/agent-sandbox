@@ -11,7 +11,7 @@ This repository is documentation plus Claude Code skills, and a few helper scrip
 |---|---|
 | [`docs/`](docs/index.md) | All documentation. Start at the index. |
 | [`.claude/skills/`](.claude/skills) | Skills that set up and smoke-test a sandbox, and that develop a sandbox for your project. See [How to use this](#how-to-use-this). |
-| [`scripts/`](scripts/README.md) | Helper scripts: pull the commits or changes an agent made in a Docker Sandbox or OpenShell sandbox into a local git branch. Tested in `tests/scripts/` and by the setup skills. |
+| [`scripts/`](scripts/README.md) | Helper scripts: pull the commits or changes an agent made in a Docker Sandbox or OpenShell sandbox into a local git branch. Tested in `tests/scripts/` and by the setup skills. The skills' smoke-test runners are the `smoketest.py` entry points in `.claude/skills/setup-smoketest-*/`, with their code in the `sbx_smoketest/` and `openshell_smoketest/` packages next to them; their pure helpers are unit-tested in `tests/skills/`. |
 | [`docs/guides/how-to/`](docs/guides/how-to/index.md) | How to run a session, change permissions and commit the sandbox definition, for Docker Sandboxes and OpenShell. For humans and agents. |
 | [`docs/analysis/harness/`](docs/analysis/harness/index.md) | Built-in sandboxes and approval models of the agent harnesses: Claude Code, Codex, Pi-dev. |
 | [`docs/analysis/execution/`](docs/analysis/execution/index.md) | Outer execution boundaries: Docker Sandboxes, ordinary Docker, E2B, NVIDIA OpenShell, with local setup guides. |
