@@ -84,7 +84,9 @@ if (Test-Sandbox) {
     $mode = if ($Clone) { 'clone' } else { 'direct mount' }
     Write-Host "== creating sandbox $Name ($mode) from ~/.sbxenv.yaml + sbxenv.yaml"
     # No PATH argument: that is what makes sbx merge ~/.sbxenv.yaml with ./sbxenv.yaml.
-    $cloneArg = if ($Clone) { @('--clone') } else { @() }
+    # @(...) around the if: a one-element array returned from `if` unwraps to a string, and splatting
+    # a string passes its characters (- - c l o n e).
+    $cloneArg = @(if ($Clone) { '--clone' })
     Push-Location $Repo
     try { Invoke-Native { sbx env create --force @cloneArg } } finally { Pop-Location }
 
