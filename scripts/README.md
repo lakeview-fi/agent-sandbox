@@ -8,6 +8,8 @@ Helper scripts for humans and agents. Python 3, standard library only. Run them 
 | [`pull_openshell_changes.py`](pull_openshell_changes.py) | Bring the changes an agent made in an OpenShell sandbox copy into a local branch of the host repo, as the agent's commits or one combined commit. |
 | [`sandbox_git_common.py`](sandbox_git_common.py) | Shared git helpers (not run directly). |
 
+**In a project sandbox:** the `develop-sandbox` skill copies these scripts (without the tests) into the project's `sandbox/scripts/`, and the template `pull.ps1` and `run.sh pull` call that copy. This folder stays the source; a project copy is adapted per repo and does not follow later changes here.
+
 ## Docker Sandboxes
 
 ```sh

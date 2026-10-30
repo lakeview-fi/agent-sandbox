@@ -24,8 +24,8 @@ STAGE_FILE="$SANDBOX_DIR/.stage-path"   # local, git-ignored (see sandbox/.gitig
 PROJECT=$(basename "$ROOT")
 NAME="$PROJECT-sbx"                      # sandbox name on the gateway
 IMAGE="$PROJECT-sbx:dev"                 # image tag built by `build`
-# ADAPT: absolute path of the scripts folder in the agent-sandbox repo (the develop-sandbox skill fills this in).
-AGENT_SANDBOX_SCRIPTS='ADAPT'
+# The develop-sandbox skill copies the agent-sandbox repo's scripts/*.py here. Adapt the copy to this repo if needed.
+AGENT_SANDBOX_SCRIPTS="$SANDBOX_DIR/scripts"
 # Extra top-level paths to keep out of the upload (regex alternatives, for example 'data|runs').
 # sandbox/ and .claude/ are always excluded.
 STAGE_EXCLUDE=''

@@ -57,7 +57,7 @@ Start from the templates. Do not hand-write the files from scratch.
    - Put a value in the repo file only when it is specific to the repo. Check the merged result with `sbx env plan` from the repo root.
 2. Read the project (language, package manager, build and test commands, registries, git host), then adapt the parts marked `ADAPT:` in each file. Leave the rest. The defaults are a Python project with `uv`, Claude Code as the agent, and deny-by-default network. The repo comes in as an uploaded copy (OpenShell), or as a direct mount with a clone option (Docker).
 3. Write the project's acceptance task into `TASK.md` (section 5). Fill the "Environment" and "Scope" sections of `DECISIONS.md`.
-   Set the `ADAPT` path to the pull scripts (`pull.ps1` for Docker, `AGENT_SANDBOX_SCRIPTS` in `run.sh` for OpenShell) to the absolute path of this repo's [scripts/](../../../scripts/README.md) folder. Resolve it from this skill's own location (`../../../scripts`), and tell the user that the sandbox folder now depends on that path.
+   Copy the pull scripts into the project: this repo's [`scripts/`](../../../scripts/README.md) files `pull_docker_commits.py` (Docker) or `pull_openshell_changes.py` (OpenShell), plus `sandbox_git_common.py`, into `sandbox/scripts/` (resolve the source from this skill's own location, `../../../scripts`). `pull.ps1` and `run.sh` already point there. The copy belongs to the project, so adapt it when the repo needs it (a different default branch, extra review globs in `needs_review`) and record changes in `DECISIONS.md`. Tell the user the copy is host-run code: in direct mode the agent can edit `sandbox/scripts/`, so they review its diff like `sandbox/*.ps1` before every pull. Do not copy the tests.
 4. Remove every `ADAPT:` marker you resolved. A marker left in a file means an open decision. List it under "Pending" in `DECISIONS.md`.
 
 ## 4. Workflow
@@ -74,7 +74,7 @@ Report only what happened. Do not wait for an answer unless the step needs appro
 
 ### Bringing the agent's work back
 
-Use the shared pull scripts, never ad hoc `git fetch` or hand copying. They create a new local branch, leave the user's working tree alone, disable git hooks while applying, and list the files that need review ([scripts/README.md](../../../scripts/README.md)).
+Use the project's copy of the pull scripts (`sandbox/scripts/`), never ad hoc `git fetch` or hand copying. They create a new local branch, leave the user's working tree alone, disable git hooks while applying, and list the files that need review ([scripts/README.md](../../../scripts/README.md)).
 
 - Docker, direct mode (default): nothing to bring back. The agent's edits and commits are already in the host repo. Show the user `git log` and `git diff` instead, and point out any changed file that runs on the host (hooks, scripts, build files).
 - Docker, clone mode: `pull.ps1` runs [`pull_docker_commits.py`](../../../scripts/pull_docker_commits.py). The sandbox must be running. `stop.ps1` and `start.ps1 -Recreate` pull before they stop or remove it.

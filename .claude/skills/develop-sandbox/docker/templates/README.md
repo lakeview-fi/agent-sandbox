@@ -7,7 +7,7 @@ Runs Claude Code on this project in a Docker Sandbox (`sbx`, a microVM). Access 
 | `../sbxenv.yaml` | This repo's sandbox: name, workspace, venv path. Merged with the global `~/.sbxenv.yaml` |
 | `start.ps1` | Create the sandbox if needed, then start Claude Code (interactive or `-Prompt`) |
 | `stop.ps1` | End of session: pull (clone mode) and stop; `-Remove` deletes the sandbox |
-| `pull.ps1` | Clone mode only: pull the agent's commits into a local branch; `-Merge` fast-forwards (calls the agent-sandbox repo's `scripts/pull_docker_commits.py`) |
+| `pull.ps1` | Clone mode only: pull the agent's commits into a local branch; `-Merge` fast-forwards (runs `sandbox/scripts/pull_docker_commits.py`) |
 | `setup-in-sandbox.sh` | Runs inside after create: tools, agents, git identity, deps |
 | `allowed-hosts.txt` | Network hosts beyond the Claude hosts |
 | `watch-policy.ps1` | Background watcher (started by `start.ps1`): appends allowed and blocked network requests to `%LOCALAPPDATA%\sbx-policy-logs\<name>.jsonl` |

@@ -23,7 +23,8 @@ The default is a built-in `claude` agent with the subscription login. The defini
 | `start.ps1` | `sandbox/` | Create if missing (`-Clone` for clone mode), allow list, setup, start Claude Code (`-Agent`, `-Prompt`, `-Recreate`, `-Resetup`, `-SetupOnly`) | `$Agent` default, the run-time notice |
 | `stop.ps1` | `sandbox/` | Pull (clone mode), then stop; `-Remove` deletes | nothing |
 | `setup-in-sandbox.sh` | `sandbox/` | Runs inside after create: tools, agents and skills, git identity, hooks (clone), deps | the `ADAPT` blocks |
-| `pull.ps1` | `sandbox/` | Clone mode: wrapper around [`scripts/pull_docker_commits.py`](../../../../scripts/pull_docker_commits.py); direct mode: says there is nothing to pull | the `$Scripts` path (`ADAPT`) |
+| `pull.ps1` | `sandbox/` | Clone mode: wrapper around `sandbox/scripts/pull_docker_commits.py`, a project copy of [`scripts/pull_docker_commits.py`](../../../../scripts/pull_docker_commits.py) and `sandbox_git_common.py`; direct mode: says there is nothing to pull | the copied scripts (review globs, branch names) |
+| `scripts/*.py` | `sandbox/scripts/` | Copied from this repo's `scripts/` when installing: `pull_docker_commits.py`, `sandbox_git_common.py` | as needed for the repo |
 | `allowed-hosts.txt` | `sandbox/` | Per-sandbox network allow list. A `<host> <METHODS> <path-glob>` line is an HTTP rule | the hosts |
 | `watch-policy.ps1` | `sandbox/` | Started by `start.ps1` in the background (`-NoWatch` skips it). Polls `sbx policy log --json` and appends allowed and blocked requests as JSON lines to a file outside the repo (`%LOCALAPPDATA%\sbx-policy-logs\<name>.jsonl`). Limits: sbx aggregates per host (no paths or methods) and logs no filesystem denials | nothing |
 | `kit/kit.yaml`, `kit/kit.dockerfile` | `sandbox/kit/` | Optional image: root and system installs at build time (see "Image" below) | base image, the installs, pinned versions |

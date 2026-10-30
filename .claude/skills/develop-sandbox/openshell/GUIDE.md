@@ -8,7 +8,7 @@ Read with [../SKILL.md](../SKILL.md), which holds the shared rules. Docs index: 
 
 | File | Role | Usually adapt |
 |---|---|---|
-| `run.sh` | Steps: `build`, `stage`, `create`, `login`, `baseline`, `test`, `agent`, `negative`, `safety`, `pull`, `teardown` (`pull` calls [`scripts/pull_openshell_changes.py`](../../../../scripts/pull_openshell_changes.py)) | the variable block (including `AGENT_SANDBOX_SCRIPTS`), `project_checks`, `RUN_ENV` |
+| `run.sh` | Steps: `build`, `stage`, `create`, `login`, `baseline`, `test`, `agent`, `negative`, `safety`, `pull`, `teardown` (`pull` calls `sandbox/scripts/pull_openshell_changes.py`, a project copy of [`scripts/pull_openshell_changes.py`](../../../../scripts/pull_openshell_changes.py) and `sandbox_git_common.py`) | the variable block, `project_checks`, `RUN_ENV`, the copied scripts |
 | `Dockerfile` | Agent CLI, toolchain, OpenShell supervisor, workload user | the toolchain block, pinned versions |
 | `policy.yaml` | Filesystem, landlock, process, network (deny by default) | project network rules |
 | `boundary.yaml` | The most access you accept (prover input) | keep in step with the reviewed `policy.yaml` |
