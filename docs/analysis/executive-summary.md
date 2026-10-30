@@ -19,19 +19,21 @@ The effective control is the intersection of both, plus anything that runs outsi
 | **Codex** | Harness | Local coding agent. Command sandbox (read-only, workspace-write, full access) with approval policies; command network off by default in workspace-write. |
 | **Pi-dev** | Harness | Extensible, composable agent core. No built-in sandbox or per-tool approvals; isolation comes from an external runtime or an extension. |
 | **Ordinary Docker** | Execution | Reproducible builds, CI, resource limits. Shares the host kernel, so a weak choice for hostile code. |
-| **Docker Sandboxes (`sbx`)** | Execution | Local autonomous-agent isolation: one microVM per agent with its own kernel and private Docker Engine; mountless, direct, or clone workspace modes. |
+| **Docker Sandboxes (`sbx`)** | Execution | Local autonomous-agent isolation: one microVM per agent with its own kernel and private Docker Engine; mountless, direct (live, commits land on the host), or clone workspace modes. |
 | **E2B** | Execution | Managed (or self-hosted) microVM sandboxes via SDK/API for products that run user code remotely. Outbound access is on by default. |
-| **NVIDIA OpenShell** | Execution | Policy runtime for centrally governed agents: Landlock filesystem, deny-by-default egress, credential brokering, audit. Boundary depends on the compute driver. |
+| **NVIDIA OpenShell** | Execution | Policy runtime for centrally governed agents: Landlock filesystem, deny-by-default egress, credential brokering, audit. Boundary depends on the compute driver. Works on an uploaded copy; no live host mount by default. |
 
 ## What is recommended
 
 | Situation | Recommendation | Reasoning |
 |---|---|---|
 | Routine local work on a trusted repo | Use the harness's own sandbox (Claude Code or Codex) with a narrow filesystem boundary and command network limited to what is needed. | The inputs are trusted, so the lightest control that fits the normal workflow is enough. The native sandboxes are integrated and fast, and limit shell commands, but they cover only commands, not connectors or other tools. |
-| Untrusted or autonomous agents, including Pi on an untrusted repo | Run the **whole agent process** in a microVM boundary. For one developer or a small team, start with **Docker Sandboxes**, preferring clone or mountless mode and a narrow egress policy. | A microVM has its own kernel, unlike a container or a command sandbox. Whole-process isolation also covers extensions and tools that command-only sandboxes miss; Pi has no sandbox of its own. Docker Sandboxes is the more turnkey local option, with a private Docker Engine and workspace modes that give a review and handoff point. |
-| Team or fleet needing central policy, credential providers and audit | **NVIDIA OpenShell**; accept more setup and verify the effective policy, including provider-added rules. | It has the most detailed policy surface in the notes: deny-by-default egress, request-aware rules, gateway-held credentials and audit. The price is more moving parts, and its boundary depends on the compute driver you pick. |
+| Untrusted or autonomous agents, including Pi on an untrusted repo | Run the **whole agent process** in a microVM boundary. For one developer or a small team, start with **Docker Sandboxes**, preferring clone or mountless mode and a narrow egress policy. | A microVM has its own kernel, unlike a container or a command sandbox. Whole-process isolation also covers extensions and tools that command-only sandboxes miss; Pi has no sandbox of its own. Docker Sandboxes is the more turnkey local option, with a private Docker Engine and workspace modes that give a review and handoff point. It is also the simpler fit for local development: a direct mount puts the agent's edits and commits straight into your working tree (clone mode gives a plain `git fetch`), so the normal git review and commit flow applies. The direct mount's convenience carries risk, since the agent can also change hooks and CI files, so review those. |
+| Team or fleet needing central policy, credential providers and audit | **NVIDIA OpenShell**; accept more setup and verify the effective policy, including provider-added rules. | It has the most detailed policy surface in the notes: deny-by-default egress, request-aware rules, gateway-held credentials and audit. The price is more moving parts, and its boundary depends on the compute driver you pick. Local git workflow is also less direct than with Docker Sandboxes: files go in as an upload, nothing syncs back, and commits return through a patch or download applied to a new host branch (a live host mount is an operator-only opt-in). |
 | Product feature that runs user code remotely | **E2B**; narrow egress, token-gate ingress, set timeouts, clean up persisted sandboxes. | It is built for application-managed remote execution through an SDK or API, with microVM isolation and parallel jobs. Defaults need tightening: outbound access is on and public URLs are open unless token-gated. |
 | Trusted build/test jobs | Ordinary Docker with non-root, minimal mounts and no host Docker socket. | It packages environments and sets resource limits at low cost. The shared host kernel is acceptable only when the code is trusted; if it is not, move up to a microVM. |
+
+**How results come back differs between the two microVM/policy options.** Docker Sandboxes can mount the host repository directly, so the agent's edits and commits appear in your working tree immediately (or stay in a private clone until you fetch them). OpenShell works on an uploaded copy and nothing syncs back; a live host bind mount exists only if the gateway operator enables it, is read-only by default, and can bypass the filesystem policy. With OpenShell, expect to download or apply a patch to a new host branch and review it. Details: [host-guest file sharing](synthesis/host-guest-file-sharing-and-version-control.md).
 
 Do this regardless of the tool:
 
@@ -57,8 +59,8 @@ OpenShell is not production-qualified on native Windows; on a Windows 11 host, D
 
 Once a trial passes, a managing agent can develop a project-specific sandbox (Dockerfile, mounts, network policy, agent persona) and prove it with a representative task, following [the method](../guides/developing-an-app-sandbox.md):
 
-- **Docker Sandboxes:** [`develop-docker-sandbox`](../../.claude/skills/develop-docker-sandbox/SKILL.md)
-- **NVIDIA OpenShell:** [`develop-openshell-sandbox`](../../.claude/skills/develop-openshell-sandbox/SKILL.md)
+- **Docker Sandboxes:** [`develop-sandbox`](../../.claude/skills/develop-sandbox/SKILL.md), type Docker
+- **NVIDIA OpenShell:** [`develop-sandbox`](../../.claude/skills/develop-sandbox/SKILL.md), type OpenShell
 
 ## Where to read more
 

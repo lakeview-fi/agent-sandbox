@@ -18,7 +18,7 @@ Neither product makes permitted actions harmless. An agent with write access can
 | Choose | When |
 |---|---|
 | **Docker Sandboxes** | You want a ready local microVM workflow, private Docker Engine, and simple workspace modes for one developer or a small number of agents. Prefer `--clone` when you want to review and fetch changes rather than share a live working tree. |
-| **NVIDIA OpenShell** | You want explicit policy administration, credential providers, detailed network rules, logs, or a runtime that can be managed across a team. Choose a local driver that is supported by your OS and configure the gateway and workspace deliberately. |
+| **NVIDIA OpenShell** | You want explicit policy administration, credential providers, detailed network rules, logs, or a runtime that can be managed across a team. Choose a local driver that is supported by your OS and configure the gateway and workspace deliberately. Files arrive as an upload (a copy) and changes do not sync back; a live host mount is an operator-only opt-in. If you need the agent's commits to land directly in your host repository, choose Docker Sandboxes. |
 
 For Windows 11, Docker Sandboxes currently has a documented local installation route with Windows Hypervisor Platform. NVIDIA OpenShell’s current installation documentation describes native Windows MXC as developmental and not production-qualified; WSL2 use is described as experimental. Check the current support matrix before choosing OpenShell on Windows. Claude Code’s built-in sandbox does not run on native Windows (WSL2 only), so it cannot serve as the optional inner layer there. ([Docker installation](https://docs.docker.com/ai/sandboxes/install/), [OpenShell installation](https://docs.nvidia.com/openshell/latest/about/installation/))
 
@@ -55,7 +55,7 @@ Runnable checklists (preflight, least-access setup, smoke test, teardown) for tr
 - [`setup-smoketest-docker-sandbox`](../../../.claude/skills/setup-smoketest-docker-sandbox/SKILL.md)
 - [`setup-smoketest-openshell`](../../../.claude/skills/setup-smoketest-openshell/SKILL.md)
 
-To then build a project-specific sandbox (Dockerfile, mounts, network policy, persona) and test an agent in it, use [`develop-docker-sandbox`](../../../.claude/skills/develop-docker-sandbox/SKILL.md) or [`develop-openshell-sandbox`](../../../.claude/skills/develop-openshell-sandbox/SKILL.md), which follow [the method](../../guides/developing-an-app-sandbox.md).
+To then build a project-specific sandbox (Dockerfile, mounts, network policy, persona) and test an agent in it, use [`develop-sandbox`](../../../.claude/skills/develop-sandbox/SKILL.md), which follow [the method](../../guides/developing-an-app-sandbox.md).
 
 ## Source and version notes
 
