@@ -27,7 +27,7 @@ sandbox/
 |---|---|
 | Everything above | Secret values, tokens, `.env` files (name them in `secrets` / providers only) |
 | `.gitattributes` forcing LF on `*.sh`, Dockerfiles, kit files | `sandbox/effective.yaml` dumps (regenerate them) |
-| `DECISIONS.md` | Per-machine trial records (`docs/trials/` is gitignored) |
+| `DECISIONS.md` | Per-machine trial records (this repo's `docs/trials/` is gitignored; keep yours local too) |
 
 Keep the definition directory **outside** every directory the sandbox mounts or uploads, or the agent could edit what runs next. The exception is Docker's repo `sbxenv.yaml` at the root of a direct-mounted workspace: sbx mounts it read-only. A file in a subfolder of a mount could be swapped by renaming the folder. With a direct mount, the scripts in `sandbox/` are writable by the agent; review their diff before you run them again. Docker mounts the env file read-only by default; do not set `sandboxOptions.writableEnvFiles` unless you trust the agent with it. Review the diff of `sandbox/` before every rebuild.
 

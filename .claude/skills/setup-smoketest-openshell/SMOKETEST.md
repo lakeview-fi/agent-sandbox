@@ -38,15 +38,15 @@
 
 **8e is the check that proves the setup works end to end**: the sandboxed agent authenticates with a credential the guest never holds and completes a task. 8c is the cheap pre-check (the provider path works without the agent). A provider must exist in the gateway; the user creates it (the key never goes through you). With none configured 8e is a SKIP: report "not verified".
 
-## Running pi through openrouter (check 8e, `--agent pi`)
+## Running pi through an `openrouter` provider (check 8e, `--agent pi`)
 
-Verified 2026-10-29 (pi 0.73.1, `trial-pi:local`, model `anthropic/claude-haiku-4.5`): `SETUP VERIFIED`.
+`openrouter` is the example provider here; any provider that the gateway holds works the same way (adapt the host and environment names). Tested with pi 0.73.1, image `trial-pi:local`, model `anthropic/claude-haiku-4.5`: `SETUP VERIFIED`.
 
 1. **No policy rule needed.** pi is a node script (`/usr/local/bin/pi` links to `.../pi-coding-agent/dist/cli.js`), so the process calling `openrouter.ai` is `/usr/local/bin/node`, already allowed by `_provider_openrouter`.
 2. **No env mapping needed.** pi's built-in `openrouter` provider reads `OPENROUTER_API_KEY` (the guest's placeholder) and uses `https://openrouter.ai/api/v1`. Run `pi -p --provider openrouter --model anthropic/claude-haiku-4.5 --no-session "<prompt>"` with `PI_OFFLINE=1` (no update checks). pi runs tools without permission prompts.
 3. **Output-token cap.** pi requests 64000 output tokens by default, so a spend-limited key fails with `402 ... can only afford ...`. The script writes `~/.pi/agent/models.json` in the guest with `modelOverrides` `maxTokens: 4000` for that model (no credential in it).
 
-## Running claude through openrouter (check 8e)
+## Running claude through an `openrouter` provider (check 8e)
 
 Three things are needed, and `smoketest.py` does all of them:
 
@@ -89,15 +89,20 @@ Both skills run the same questions; OpenShell has no clone mode, so work handoff
 
 ## Verification status of this skill
 
-Verified (WSL2 on Windows 11, Docker driver, `openshell` 0.1.5, image `trial-claude:local` with Claude Code 2.1.312, provider `openrouter`): every check above passed in a full script run (2026-10-29), including inference (`HTTP 200`, reply `OK`) and live add and remove of a rule.
+Tested with:
 
-Check 8e passed on 2026-10-29 (openshell 0.1.5): the native `claude.exe` read a file and replied with its random token through `openrouter` (model `anthropic/claude-haiku-4.5`), and the run ended `SETUP VERIFIED`. The teardown check "other sandboxes untouched" reports INFO instead of FAIL when a foreign sandbox vanishes during the run (another session may be using the gateway). Not verified: 8e with an `anthropic` provider.
+| Host | Driver | `openshell` | Agent and provider | Result |
+|---|---|---|---|---|
+| WSL2 on Windows 11 | Docker | 0.1.5 | Claude Code 2.1.312 (image `trial-claude:local`), `openrouter` | Every check above passes in a full script run, including inference (`HTTP 200`, reply `OK`), live add and remove of a rule, and 8e: the native `claude.exe` reads a file and replies with its random token (`SETUP VERIFIED`). |
+| WSL2 on Windows 11 | Docker | 0.1.5 | pi 0.73.1 (image `trial-pi:local`), `openrouter` | `SETUP VERIFIED`. |
 
-Not verified: MicroVM driver (the driver in use was not confirmed); an `anthropic` provider and `claude -p` inference; `--image default`; macOS and native Linux; native Windows (MXC); Policy Advisor approval flow (that the agent cannot approve its own proposal); the failure path of the script (a failed `sandbox create`); `--record` against the real record file; any `openshell` version other than 0.1.5. A run on a new OS or version should say which of these it covered.
+The teardown check "other sandboxes untouched" reports INFO instead of FAIL when a foreign sandbox vanishes during the run, because another session may be using the same gateway.
 
-## Package installs by the agent (findings by hand, not yet scripted)
+Not covered yet: MicroVM driver; an `anthropic` provider and `claude -p` inference; `--image default`; macOS and native Linux; native Windows (MXC); the Policy Advisor approval flow (that the agent cannot approve its own proposal); the failure path of the script (a failed `sandbox create`); `--record` against an existing record file; any other `openshell` version. A run on a new OS or version should say which of these it covered, and add a row above.
 
-Hand-run on 2026-10-29 in a `trial-claude:local` sandbox (user `node`, no sudo, `/usr` and `/var/log` read-only by policy, python 3.11 after the image gained `python3 python3-pip python3-venv`).
+## Package installs by the agent (manual checks, not yet scripted)
+
+Expected behaviour in a sandbox built from this skill's image (user `node`, no sudo, `/usr` and `/var/log` read-only by policy, python 3.11 once the image has `python3 python3-pip python3-venv`).
 
 - **Python.** `python3 -m venv /sandbox/venv` works (the work dir is writable), but `pip install` is denied: `[Errno 13] Permission denied`, log `NET:OPEN DENIED /usr/bin/python3.11 -> pypi.org:443`. The denial line names the binary to allow. A rule needs the L7 form and both hosts, scoped to the interpreter: `openshell policy update <name> --add-endpoint pypi.org:443:read-write:rest:enforce --add-endpoint files.pythonhosted.org:443:read-write:rest:enforce --binary /usr/bin/python3.11 --wait` (untested; the form follows the openrouter rule that worked).
 - **Linux packages are not possible in this sandbox profile, whatever the network policy.** `apt-get update` fails with `Permission denied` on `/var/lib/apt/lists/partial` and `/var/lib/dpkg/status`: the agent is not root, there is no sudo, and `/usr` is read-only. Installing system packages needs a different filesystem and user policy chosen at creation (`--policy`), which weakens the sandbox. Report this as a limit of the profile, not as a network failure, and prefer pip-in-venv or npm for the agent's dependencies.

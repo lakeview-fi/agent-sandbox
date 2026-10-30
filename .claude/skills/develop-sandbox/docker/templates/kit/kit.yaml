@@ -1,9 +1,10 @@
 # syntax=docker/sandbox-kit:3
 # Optional v3 workload kit for Claude Code: the built-in image plus the project's root and system
-# installs (kit.dockerfile). Use it with `kits: [./sandbox/kit]` in the repo sbxenv.yaml instead of
-# `agent: claude` (GUIDE.md, "Image"). Build and check without a sandbox: `sbx kit validate <dir>`.
-# UNVERIFIED for Claude Code: the credential capability below is modelled on the verified pi kit
-# (setup-smoketest-docker-sandbox/kit-pi). Verify with `claude auth status` (authMethod: claude.ai).
+# installs (kit.dockerfile). Select it in the repo sbxenv.yaml with `agent: kit` (the kit's folder
+# name) plus `kits: [./sandbox/kit]` (GUIDE.md, "Image"). Check without a sandbox: `sbx kit validate`.
+# LOGIN FAILED in testing: the credential capability below, modelled on the verified pi
+# kit (setup-smoketest-docker-sandbox/kit-pi), got "no credential resolved for required service"
+# even after the user approved the binding. Verify with `claude auth status` (authMethod: claude.ai).
 schemaVersion: "3"
 kind: workload
 capabilities:

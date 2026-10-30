@@ -39,8 +39,8 @@ Do this after changing integration settings, and again if the socket is denied:
 ## Socket symptoms
 
 - `permission denied while trying to connect to the docker API at unix:///var/run/docker.sock`.
-- Observed (WSL2 with a per-user Docker Desktop install): the socket was `srw-rw---- nobody nogroup`, and so were the sockets under `/mnt/wsl/docker-desktop/shared-sockets/`. Adding the user to the `docker` group does not help, because the socket's group is `nogroup`.
-- Observed: the error went away only after the restart order. Do not chmod or chown the socket; the change does not survive a restart and bypasses Docker Desktop's access handling.
+- With a per-user Docker Desktop install on WSL2, the socket can show as `srw-rw---- nobody nogroup`, and so can the sockets under `/mnt/wsl/docker-desktop/shared-sockets/`. Adding the user to the `docker` group does not help, because the socket's group is `nogroup`.
+- In that state the error usually goes away only after the restart order above. Do not chmod or chown the socket; the change does not survive a restart and bypasses Docker Desktop's access handling.
 
 ## What success looks like
 

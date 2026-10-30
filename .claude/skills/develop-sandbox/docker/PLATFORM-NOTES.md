@@ -4,7 +4,7 @@ Read with the shared "Host differences" section of [developing-an-app-sandbox.md
 
 ## Support status: Windows and PowerShell only (other OSs not yet supported)
 
-All development and verification so far ran on Windows 11 with PowerShell (pwsh 7) and `sbx` v0.50.1. The host-side scripts are PowerShell: `start.ps1`, `stop.ps1`, `pull.ps1` and `watch-policy.ps1`. Nothing has been tested on macOS or Linux. Tell the user this before building there. Open work for macOS and Linux:
+The templates were tested only on Windows 11 with PowerShell (pwsh 7) and `sbx` v0.50.1. The host-side scripts are PowerShell: `start.ps1`, `stop.ps1`, `pull.ps1` and `watch-policy.ps1`. Nothing has been tested on macOS or Linux. Tell the user this before building there. Open work for macOS and Linux:
 - Run the `.ps1` scripts with `pwsh`, or port them to `sh`. Windows-specific parts:
   - `ConvertTo-SandboxPath` in `start.ps1` assumes a drive-letter path (`C:\x` becomes `/c/x`); on macOS and Linux the host path is used as is.
   - `Start-Process -WindowStyle Hidden` starts the watcher, so `start.ps1` skips it elsewhere and tells the user to run it by hand.

@@ -143,7 +143,7 @@ Write `docs/trials/openshell-<os>.md`. For WSL2 on Windows, use `openshell-windo
 - each smoke-test result, and each finding;
 - approvals given, and what was torn down.
 
-`docs/trials/` already exists and is listed in `docs/index.md`. Its records are local and gitignored.
+`docs/trials/` is created on the first `--record` run (or by hand) and is listed in `docs/index.md`. Its records are local and gitignored, so a fresh clone does not have it.
 
 ### 7. Teardown
 
@@ -186,7 +186,7 @@ The agent's bash sandbox can block the Docker socket and the gateway, even when 
 
 ## Running pi instead of claude
 
-[pi](https://github.com/badlogic/pi-mono) (`@mariozechner/pi-coding-agent`, command `pi`, one-shot `pi -p "<prompt>"`) has its own image, [Dockerfile.pi](Dockerfile.pi) (`trial-pi:local`, see [SANDBOX-IMAGE.md](SANDBOX-IMAGE.md)). Run `smoketest.py --agent pi` (the image defaults to `trial-<agent>:local`). `--agent` selects an `AgentSpec` in `smoketest.py` (`AGENTS`) that drives checks 8a and 8e; to support another agent, add an entry there. For pi on `openrouter`: pi reads `OPENROUTER_API_KEY` itself (the guest holds the placeholder), so no env mapping and no extra policy rule are needed (pi is a node script; the network client is `/usr/local/bin/node`, which the provider rule allows); a `models.json` override caps output tokens at 4000 (see SMOKETEST.md). Verified 2026-10-29: `SETUP VERIFIED`. Never put a raw key in the guest.
+[pi](https://github.com/badlogic/pi-mono) (`@mariozechner/pi-coding-agent`, command `pi`, one-shot `pi -p "<prompt>"`) has its own image, [Dockerfile.pi](Dockerfile.pi) (`trial-pi:local`, see [SANDBOX-IMAGE.md](SANDBOX-IMAGE.md)). Run `smoketest.py --agent pi` (the image defaults to `trial-<agent>:local`). `--agent` selects an `AgentSpec` in `smoketest.py` (`AGENTS`) that drives checks 8a and 8e; to support another agent, add an entry there. For pi on `openrouter`: pi reads `OPENROUTER_API_KEY` itself (the guest holds the placeholder), so no env mapping and no extra policy rule are needed (pi is a node script; the network client is `/usr/local/bin/node`, which the provider rule allows); a `models.json` override caps output tokens at 4000 (see SMOKETEST.md). Tested: `SETUP VERIFIED`. Never put a raw key in the guest.
 
 ## After setup
 

@@ -48,19 +48,24 @@ Manual extras worth adding when a project depends on them: reachability of host-
 
 ## Verification status of this skill
 
-Verified (Windows 11, `sbx` v0.50.1, `claude` agent): every isolation and policy check passed in the full script runs. **Agent verified (2026-10-29):** with the subscription `/login` (no API-key secret stored; guest holds only the two `proxy-managed` sentinels) 8c and 8e PASS and the run ends `SETUP VERIFIED`. A stored `anthropic` secret that is invalid or of the wrong type (API-key mode, `x-api-key`) fails with a 401. The 8d check ignores the sbx sentinels.
+Tested with:
 
-pi (kit-pi, 2026-10-29): isolation checks, 8a and 8d pass. 8c and 8e need the user to approve the kit's `anthropic` credential binding once (see SKILL.md) and fail with `401` until then. Not verified end to end.
+| Host | `sbx` | Agent | Result |
+|---|---|---|---|
+| Windows 11 | v0.50.1 | `claude` | Every isolation and policy check passes; with the subscription `/login` (no API-key secret stored; the guest holds only the two `proxy-managed` sentinels) 8c and 8e pass and the run ends `SETUP VERIFIED`. |
+| Windows 11 | v0.50.1 | `pi` (kit-pi) | Isolation checks, 8a and 8d pass. 8c and 8e need the user to approve the kit's `anthropic` credential binding once (see SKILL.md) and fail with `401` until then. Not verified end to end. |
 
-Not verified: `--keep`; `--agent codex`; macOS and Linux (including the host-to-guest path mapping and the `/run/sandbox/source` mount); the comparison against Docker's live docs; any `sbx` version other than v0.50.1. A run on a new OS or version should say which of these it covered.
+A stored `anthropic` secret that is invalid or of the wrong type (API-key mode, `x-api-key`) fails with a 401. The 8d check ignores the sbx sentinels.
+
+Not covered yet: `--keep`; `--agent codex`; macOS and Linux (including the host-to-guest path mapping and the `/run/sandbox/source` mount); the comparison against Docker's live docs; any other `sbx` version. A run on a new OS or version should say which of these it covered, and add a row above.
 
 ## Kit hosts
 
 A new sandbox carries a kit policy that allows a few hosts (7 for `claude` on `sbx` v0.50.1), so `deny-all` is not empty. `sbx policy ls trial --wide` lists the individual hosts and rule IDs; the script puts the full text in the record. Compare against what you expect for the agent: API endpoint, package registries, telemetry. An unexpected host is a finding.
 
-## Package installs by the agent (findings by hand, not yet scripted)
+## Package installs by the agent (manual checks, not yet scripted)
 
-Hand-run on 2026-10-29 in a built-in `claude` sandbox (user `agent`, passwordless sudo, python3 3.14, pip, uv, apt, Ubuntu 26.04). The agent should be given these tasks once 8e passes; until then they were run as plain shell commands, which exercise the same network path.
+Expected behaviour in the built-in `claude` sandbox (user `agent`, passwordless sudo, with python3, pip, uv and apt; Ubuntu-based, so details vary by image version). Give the agent these tasks once 8e passes; before that, run them as plain shell commands, which exercise the same network path.
 
 - **Python (`pip install --target /tmp/x requests`).** Blocked at first (`No matching distribution found`; each blocked host queues an approval). It needs `pypi.org:443` and then `files.pythonhosted.org:443`, discovered one at a time. Answering the approvals with `sbx policy approval respond <id> --option allow` (rules are stored as `created via approval`, scoped to the sandbox) or `sbx policy allow network --sandbox <name> "pypi.org,files.pythonhosted.org"` both work, live; the install then succeeded.
 - **Linux (`sudo apt-get install -y tree`).** Needs `archive.ubuntu.com` and `security.ubuntu.com` on port 80: `sbx policy allow network --sandbox <name> "archive.ubuntu.com,security.ubuntu.com"`. `apt-get update` still exits 100, because the image ships two third-party repos (`download.docker.com`, `cli.github.com`) that stay blocked; the Ubuntu indexes and the install itself worked. Allow those two hosts as well for a clean update, or tell the agent to ignore that exit code.

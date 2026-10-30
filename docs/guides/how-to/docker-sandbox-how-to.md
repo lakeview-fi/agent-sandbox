@@ -102,10 +102,10 @@ Pick the workflow when you create the sandbox. It cannot be changed afterwards (
 | **Clone** (`--clone`) | A private copy inside the VM; your repo is read-only at `/run/sandbox/source` | The agent commits in its copy | `git fetch sandbox-myproj`, then review and merge or push |
 | **Mountless** (`sbx create` with no path) | Files inside the VM only | The agent, after cloning from a remote | The agent pushes to a remote; or `sbx cp` |
 
-The `develop-sandbox` templates default to **direct mount** and offer clone with `start.ps1 -Clone`. Direct mount on a Windows host, verified 2026-10-30 with `sbx` v0.50.1:
+The `develop-sandbox` templates default to **direct mount** and offer clone with `start.ps1 -Clone`. Direct mount on a Windows host, tested with `sbx` v0.50.1:
 - The repo appears at the same path (`/c/Users/...`), and git sees the same status as the host (no line-ending noise). `.git/config`, including `core.hooksPath`, is shared, and the mount shows the hooks as executable.
 - The sandbox does not see your global or system git config. Set identity and `core.autocrlf=input` in the sandbox user's `~/.gitconfig`, never in the repo's `.git/config`.
-- The host's Windows `.venv` is in the mount. Set `UV_PROJECT_ENVIRONMENT` to a path in the sandbox home, or `uv sync` replaces it. Tests ran noticeably slower on the mount than on a clone's local disk (about 2x in one project).
+- The host's Windows `.venv` is in the mount. Set `UV_PROJECT_ENVIRONMENT` to a path in the sandbox home, or `uv sync` replaces it. Tests ran noticeably slower on the mount than on a clone's local disk (about 2x in one measured project).
 - Do not run git on the host while the agent commits (shared index and locks).
 
 Clone workflow, step by step. [`scripts/pull_docker_commits.py`](../../../scripts/pull_docker_commits.py) does the fetch and review for you:

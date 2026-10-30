@@ -33,7 +33,7 @@ The policy template allows `api.anthropic.com` and `platform.claude.com` (the OA
 
 What is verified and what is not:
 - **Verified:** `claude auth login --claudeai` exists (Claude Code 2.1.x), and `openshell sandbox exec --tty` exists (openshell 0.1.5).
-- **Not yet verified:** the full login inside an OpenShell sandbox. The first run must confirm two things. First, that the policy needs no further host; if it does, add it from the denial log and record it. Second, that `exec` sees `HOME=/home/sandbox`, so the login and later runs share one credentials file.
+- **Not covered by testing yet:** the full login inside an OpenShell sandbox. The first run on your host must confirm two things. First, that the policy needs no further host; if it does, add it from the denial log and record it. Second, that `exec` sees `HOME=/home/sandbox`, so the login and later runs share one credentials file.
 
 Exposure:
 - The OAuth access and refresh tokens are stored in `/home/sandbox/.claude/.credentials.json` inside the sandbox. The sandboxed agent can read them, and anything in the sandbox could send them to an allowed host.
@@ -50,7 +50,7 @@ Do not copy the host's `~/.claude/.credentials.json` into the sandbox either. A 
 
 ## Other routes for Claude Code (user decides)
 
-OpenShell's gateway holds a provider credential and the guest gets an opaque placeholder env var; the proxy swaps it for the real value on egress, only to the endpoints the provider profile binds. **Verified (2026-10-29, openshell 0.1.5):** `claude -p` completes a real tool-using task in a sandbox through an `openrouter` provider, with the env mapping `ANTHROPIC_BASE_URL=https://openrouter.ai/api`, `ANTHROPIC_AUTH_TOKEN=$OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY=` (empty), `CLAUDE_CODE_MAX_OUTPUT_TOKENS=4000`, and an L7 policy rule for the native `claude.exe`; see the smoke test skill's SMOKETEST.md, "Running claude through openrouter".
+OpenShell's gateway holds a provider credential and the guest gets an opaque placeholder env var; the proxy swaps it for the real value on egress, only to the endpoints the provider profile binds. **Tested with openshell 0.1.5:** `claude -p` completes a real tool-using task in a sandbox through an `openrouter` provider, with the env mapping `ANTHROPIC_BASE_URL=https://openrouter.ai/api`, `ANTHROPIC_AUTH_TOKEN=$OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY=` (empty), `CLAUDE_CODE_MAX_OUTPUT_TOKENS=4000`, and an L7 policy rule for the native `claude.exe`; see the smoke test skill's SMOKETEST.md, "Running claude through openrouter".
 
 OpenShell's providers do not hold a Claude **subscription**.
 - The docs say subscription users need a separate Console API key.
