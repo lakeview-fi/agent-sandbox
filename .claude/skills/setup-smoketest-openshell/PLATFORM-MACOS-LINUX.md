@@ -25,3 +25,5 @@ openshell sandbox upload trial ./src /sandbox/src
 ```
 
 Same on macOS and Linux. Linux note: if `/dev/kvm` is missing or not accessible, stop and fix it, or choose the Docker/Podman driver knowingly and record the weaker boundary.
+
+WSL note: if `uname -r` contains `microsoft`, this is WSL2 on a Windows host. Read the "WSL2 section" of [PLATFORM-WINDOWS.md](PLATFORM-WINDOWS.md) before running any preflight step; the Windows support status applies, and a missing `/dev/kvm` is common there.
