@@ -1,0 +1,11 @@
+# Network hosts this sandbox may reach, on top of the built-in claude kit's Claude hosts
+# (api.anthropic.com, platform.claude.com, ...). Recommended global default: deny-all.
+# One host or pattern per line; start.ps1 applies them with `sbx policy allow --sandbox`.
+# A line `<host> <METHODS> <path-glob>` is an HTTP rule restricted to those methods and that path,
+# e.g. `storage.googleapis.com GET,HEAD /chrome-for-testing-public/**` for one bucket of a shared host.
+# Hosts needed only to install something as root belong in the kit image build, not here.
+# Add a line to DECISIONS.md for every host.
+
+# ADAPT: package registries for the project's toolchain. Default: Python.
+pypi.org
+files.pythonhosted.org

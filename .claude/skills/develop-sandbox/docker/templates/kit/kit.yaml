@@ -1,0 +1,33 @@
+# syntax=docker/sandbox-kit:3
+# Optional v3 workload kit for Claude Code: the built-in image plus the project's root and system
+# installs (kit.dockerfile). Use it with `kits: [./sandbox/kit]` in the repo sbxenv.yaml instead of
+# `agent: claude` (GUIDE.md, "Image"). Build and check without a sandbox: `sbx kit validate <dir>`.
+# UNVERIFIED for Claude Code: the credential capability below is modelled on the verified pi kit
+# (setup-smoketest-docker-sandbox/kit-pi). Verify with `claude auth status` (authMethod: claude.ai).
+schemaVersion: "3"
+kind: workload
+capabilities:
+  - type: com.docker.sandbox/sbx@1
+  - type: com.docker.sandbox/network-policy@1
+    config:
+      runtime:
+        # Claude Code and its OAuth token endpoint. Project hosts stay in ../allowed-hosts.txt
+        # (one list, HTTP path rules supported), applied by start.ps1. Hosts needed only to build
+        # the image belong in neither list.
+        allow: [api.anthropic.com, platform.claude.com]
+  # Claude-subscription OAuth held by the sbx proxy (stored by `auth login --claudeai`, service anthropic).
+  # The guest file gets only sentinel tokens; the proxy swaps in the real token on egress.
+  # The user approves this binding once, in a real terminal (CREDENTIALS.md).
+  - type: com.docker.sandbox/credential@1
+    config:
+      service: anthropic
+      phase: runtime
+      oauth:
+        tokenEndpoint: { host: platform.claude.com, path: /v1/oauth/token }
+        resourceHosts: [api.anthropic.com]
+        sentinels: { accessToken: sk-ant-oat01-proxy-managed, refreshToken: sk-ant-ort01-proxy-managed }
+        credentialFile:
+          path: /home/agent/.claude/.credentials.json
+          # UNVERIFIED: Claude Code's file layout and the ExpiresAt format it expects.
+          structure:
+            claudeAiOauth: { accessToken: "{{.AccessToken}}", refreshToken: "{{.RefreshToken}}", expiresAt: "{{.ExpiresAt}}" }

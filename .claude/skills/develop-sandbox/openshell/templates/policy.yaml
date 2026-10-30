@@ -1,0 +1,35 @@
+# OpenShell policy (schema version 1). Deny by default; every grant has a line in DECISIONS.md.
+# Filesystem, landlock and process apply at startup only: recreate the sandbox to change them.
+# Network rules hot-reload, but copy any live edit back here, or it is lost on recreate.
+version: 1
+filesystem_policy:
+  # The project is listed explicitly; include_workdir would depend on the image workdir, which the prover cannot resolve.
+  include_workdir: false
+  # /opt: the managed toolchain lives there (see the Dockerfile).
+  read_only: [/usr, /lib, /etc, /bin, /opt, /proc]
+  # /sandbox is writable because the upload extraction creates /sandbox/src inside it. The agent can
+  # therefore add entries directly under /sandbox.
+  # /home/sandbox: Claude Code writes its config, state and subscription login under $HOME.
+  read_write: [/tmp, /sandbox, /sandbox/src, /home/sandbox]
+landlock: { compatibility: hard_requirement }
+process: { run_as_user: sandbox, run_as_group: sandbox }
+network_policies:
+  # Claude Code (a Node process): the model API, and the OAuth token endpoint used by
+  # `claude auth login` and token refresh. Read-write because both POST.
+  anthropic_api:
+    endpoints:
+      - { host: api.anthropic.com, port: 443, protocol: rest, enforcement: enforce, access: read-write }
+      - { host: platform.claude.com, port: 443, protocol: rest, enforcement: enforce, access: read-write }
+    binaries: [{ path: /usr/local/bin/node }]
+  # ADAPT: project rules. One rule per purpose, scoped to the binary that needs it, read-only
+  # where possible. Default: the Python package index for `uv sync`.
+  pypi:
+    endpoints:
+      - { host: pypi.org, port: 443, protocol: rest, enforcement: enforce, access: read-only }
+      - { host: files.pythonhosted.org, port: 443, protocol: rest, enforcement: enforce, access: read-only }
+    binaries: [{ path: /usr/local/bin/uv }]
+  # ADAPT: the docs host the acceptance task fetches (TASK.md step 3), for curl only.
+  # library_docs:
+  #   endpoints:
+  #     - { host: docs.example.org, port: 443, protocol: rest, enforcement: enforce, access: read-only }
+  #   binaries: [{ path: /usr/bin/curl }]

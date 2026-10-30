@@ -1,0 +1,23 @@
+# Operator-owned boundary: the most access this sandbox may ever have.
+# openshell-prover check must show policy.yaml (and the effective policy) within this file.
+# Widen it only with a reason recorded in DECISIONS.md.
+# ADAPT: after reviewing policy.yaml, copy its network rules here. Do not add rules the policy lacks.
+version: 1
+filesystem_policy:
+  # Gateway defaults (/var/log, /dev/urandom, /dev/null) are added to every sandbox's effective policy.
+  include_workdir: false
+  read_only: [/usr, /lib, /etc, /bin, /opt, /proc, /var/log, /dev/urandom]
+  read_write: [/tmp, /sandbox, /sandbox/src, /home/sandbox, /dev/null]
+landlock: { compatibility: hard_requirement }
+process: { run_as_user: sandbox, run_as_group: sandbox }
+network_policies:
+  anthropic_api:
+    endpoints:
+      - { host: api.anthropic.com, port: 443, protocol: rest, enforcement: enforce, access: read-write }
+      - { host: platform.claude.com, port: 443, protocol: rest, enforcement: enforce, access: read-write }
+    binaries: [{ path: /usr/local/bin/node }]
+  pypi:
+    endpoints:
+      - { host: pypi.org, port: 443, protocol: rest, enforcement: enforce, access: read-only }
+      - { host: files.pythonhosted.org, port: 443, protocol: rest, enforcement: enforce, access: read-only }
+    binaries: [{ path: /usr/local/bin/uv }]

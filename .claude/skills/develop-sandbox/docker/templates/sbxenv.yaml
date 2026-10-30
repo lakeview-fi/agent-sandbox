@@ -1,0 +1,22 @@
+# Repo Docker Sandbox definition (sbx env). Install at the REPO ROOT, not in sandbox/.
+# Merged with the global ~/.sbxenv.yaml (agent, shared mounts, sizing); values here win.
+# Start it with sandbox/start.ps1, which also applies sandbox/allowed-hosts.txt (env files have no
+# network field) and runs the in-sandbox setup. Reasons: sandbox/DECISIONS.md.
+#
+# Why the repo root: the repo is mounted into the sandbox. sbx mounts a root-level env file
+# read-only, so the agent cannot change what the next start runs. In a subfolder it could swap the
+# file by renaming the folder.
+schemaVersion: "1"
+name: myproject-sbx                  # ADAPT: sandbox name (start.ps1, stop.ps1, pull.ps1 read it)
+
+# Default: the repo is mounted directly, read-write. The agent's edits and commits land in this
+# working tree and .git at once. `start.ps1 -Clone` switches to a private clone instead
+# (workspace.clone), whose commits come back with sandbox/pull.ps1.
+workspace: .
+
+env:
+  # ADAPT: keep a Linux virtualenv out of the mounted repo (a Windows host's .venv must stay
+  # untouched). Remove for projects without uv.
+  UV_PROJECT_ENVIRONMENT: /home/agent/.venvs/myproject
+# Credentials: none here. Claude Code uses the subscription login held by the sbx proxy.
+# Never add a `secrets:` entry for anthropic: an API-key secret switches the sandbox to API-key mode.

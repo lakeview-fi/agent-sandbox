@@ -1,0 +1,2 @@
+# Keep sandbox files LF so the Linux image builds from a Windows checkout.
+* text eol=lf
