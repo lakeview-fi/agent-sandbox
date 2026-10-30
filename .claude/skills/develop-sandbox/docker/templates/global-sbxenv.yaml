@@ -11,14 +11,13 @@ agent: claude
 # ADAPT: tooling shared by the user's repos. Each mount appears at the same path inside (C:\x -> /c/x).
 # Never mount a parent folder of a repo that runs in clone mode: it covers the clone.
 additionalWorkspaces: []
-  # Example:
-  # - { path: C:\Users\me\.mytool }                                   # live tool data, read-write
+  # Example (shared tool data: prefer a host service over a read-write mount, GUIDE.md "Host service"):
   # - { path: C:\Users\me\agents, readOnly: true }                    # custom agents
   # - { path: C:\Users\me\src\mytool, readOnly: true }                # CLI source + skill
 
 # ADAPT: paths of the mounts above, for the CLIs and for each repo's setup-in-sandbox.sh. No secrets.
 env: {}
-  # MYTOOL_DB_PATH: /c/Users/me/.mytool/mytool.db
+  # SBX_MYTOOL_URL: http://host.docker.internal:8765   # host service; setup wraps the CLI with MYTOOL_URL
   # SBX_AGENTS_DIR: /c/Users/me/agents
   # SBX_TOOL_SRC: /c/Users/me/src/mytool
 
