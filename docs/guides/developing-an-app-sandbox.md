@@ -1,6 +1,6 @@
 # Developing an application-specific sandbox
 
-Tool-neutral method used by the `develop-docker-sandbox` and `develop-openshell-sandbox` skills. A **managing agent** (for example a Claude Code session on the host) develops and tests a sandbox for one project. A **sandboxed agent** (user-chosen, for example Claude Code or Codex) is launched inside that sandbox to prove it can do its job. Both setups are first proven with the `setup-smoketest-*` skills; do those first.
+Tool-neutral method used by the `develop-sandbox` skill (OpenShell or Docker Sandboxes). A **managing agent** (for example a Claude Code session on the host) develops and tests a sandbox for one project. A **sandboxed agent** (user-chosen, for example Claude Code or Codex) is launched inside that sandbox to prove it can do its job. Both setups are first proven with the `setup-smoketest-*` skills; do those first.
 
 Goal: the final sandbox is **safe** (least access that still works) and **capable** (the sandboxed agent completes the user's representative task).
 
@@ -39,7 +39,7 @@ Ask the user for anything marked "ask". State defaults you adopt.
 
 ## Safety review (all must hold or be justified in `DECISIONS.md`)
 
-- No broad host mounts (home directory, `/`, drive roots, credential folders, Docker socket). Reference data is read-only.
+- No broad host mounts (home directory, `/`, drive roots, credential folders, Docker socket). Reference data is read-only. In Docker clone mode only the primary workspace is protected: every additional workspace is a direct mount and must be `readOnly` unless writing is a recorded decision.
 - Secrets are not in images, env files or the repo; credentials reach the agent only through the tool's credential mechanism, bound to specific hosts.
 - Network is deny-by-default with an explicit allowlist; no wildcard hosts where a named host works.
 - The workload runs as a non-root user; no privileged mode.
@@ -70,5 +70,6 @@ In the sandbox directory: image definition (if needed), policy or environment fi
 
 ## Related
 
+- [How-to guides](how-to/index.md): commands for sessions and permissions, and the [config file reference](how-to/config-file-reference.md) for the files this method produces
 - [Executive summary](../analysis/executive-summary.md)
 - [Docker Sandboxes guide](../analysis/execution/docker-sandbox-local-agent-guide.md), [OpenShell guide](../analysis/execution/nvidia-openshell-local-agent-guide.md)
