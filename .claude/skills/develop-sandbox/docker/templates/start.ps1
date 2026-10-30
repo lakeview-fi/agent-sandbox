@@ -138,9 +138,16 @@ if ($SetupOnly) { return }
 # DB on a read-write mount: SQLite locks do not cross the VM boundary, so one writer side at a time.
 $agentArgs = if ($Agent) { @('--agent', $Agent) } else { @() }
 if ($Prompt) {
+    # Run log outside the repo, so the agent cannot change it in direct mode.
+    $runLog = Join-Path $env:LOCALAPPDATA "sbx-agent-logs\$Name-$(Get-Date -Format yyyyMMdd-HHmmss).log"
+    New-Item -ItemType Directory -Force (Split-Path $runLog) | Out-Null
+    Write-Host "== agent run log -> $runLog"
+    "# prompt: $Prompt" | Set-Content -Encoding utf8 $runLog
     # As the built-in agent and the kit's ENTRYPOINT: permission prompts bypassed; the microVM is
     # the boundary.
-    Invoke-Native { sbx exec $Name -- claude --dangerously-skip-permissions @agentArgs -p $Prompt }
+    sbx exec $Name -- claude --dangerously-skip-permissions @agentArgs -p $Prompt 2>&1 |
+        Tee-Object -FilePath $runLog -Append | Out-Host
+    if ($LASTEXITCODE -ne 0) { throw "Agent run failed (exit $LASTEXITCODE); see $runLog" }
 } else {
     sbx run --name $Name -- @agentArgs
 }
