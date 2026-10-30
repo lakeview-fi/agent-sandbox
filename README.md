@@ -97,3 +97,7 @@ Start with [Recommended local agent sandbox options](docs/analysis/synthesis/rec
 ## Contributing
 
 Add new notes under the matching folder in `docs/`, and add a line for each new document to that folder's `index.md` and to its parent indexes. See [docs/index.md](docs/index.md).
+
+## License
+
+Licensed under [0BSD](LICENSE), a public-domain-equivalent license. All content is drawn from public sources.
